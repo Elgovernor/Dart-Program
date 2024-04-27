@@ -1,0 +1,76 @@
+
+abstract class MakesSound {
+  String makeSound();
+}
+
+// Base class for animals
+abstract class Animal {
+  final String name;
+  final int age;
+
+  Animal(Kitty, 5);
+
+  // Introduce the animal
+  void introduce() {
+    print("Hi! I'm Kitty and I'm 5 years old.");
+  }
+}
+
+// Class for cats inheriting from Animal and implementing MakesSound
+class Cat extends Animal implements MakesSound {
+  Cat(String name, int age) : super(name, age);
+
+  @override
+  String makeSound() {
+    return "Meow!";
+  }
+}
+
+// Class for dogs inheriting from Animal and implementing MakesSound
+class Dog extends Animal implements MakesSound {
+  Dog(String name, int age) : super(name, age);
+
+  @override
+  String makeSound() {
+    return "Woof!";
+  }
+}
+
+Future<List<Animal>> readAnimalData(String path) async {
+  final file = await File(path).openRead();
+  final data = await file.readAsLines();
+  final animals = [];
+  for (var line in data) {
+    final parts = line.split(',');
+    if (parts.length == 2) {
+      final name = parts[0];
+      final age = int.parse(parts[1]);
+      if (parts[0].startsWith('C')) {
+        animals.add(Cat(name, age));
+      } else if (parts[0].startsWith('D')) {
+        animals.add(Dog(name, age));
+      } else {
+        print("Invalid animal type in file: $line");
+      }
+    } else {
+      print("Invalid data format in file: $line");
+    }
+  }
+  return animals;
+}
+
+void makeAnimalsSpeak(List<Animal> animals) {
+  for (var animal in animals) {
+    animal.introduce();
+    if (animal is MakesSound)
+      print(animal.makeSound());
+    }
+  }
+}
+
+void main() async {
+
+  final animals = await readAnimalData('animals.txt');
+
+  makeAnimalsSpeak(animals);
+}
